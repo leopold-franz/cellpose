@@ -364,8 +364,8 @@ def train_seg(net, train_data=None, train_labels=None, train_files=None,
         save_path (str, optional): String - where to save the trained model. Defaults to None.
         save_every (int, optional): Integer - save the network every [save_every] epochs. Defaults to 100.
         save_each (bool, optional): Boolean - save the network to a new filename at every [save_each] epoch. Defaults to False.
-        nimg_per_epoch (int, optional): Integer - minimum number of images to train on per epoch. Defaults to None.
-        nimg_test_per_epoch (int, optional): Integer - minimum number of images to test on per epoch. Defaults to None.
+        nimg_per_epoch (int, optional): Integer - maximum number of images to train on per epoch. Defaults to None.
+        nimg_test_per_epoch (int, optional): Integer - maximum number of images to test on per epoch. Defaults to None.
         rescale (bool, optional): Boolean - whether or not to rescale images during training. Defaults to True.
         min_train_masks (int, optional): Integer - minimum number of masks an image must have to use in the training set. Defaults to 5.
         model_name (str, optional): String - name of the network. Defaults to None.

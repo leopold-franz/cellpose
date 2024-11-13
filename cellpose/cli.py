@@ -188,6 +188,10 @@ def get_arg_parser():
         "path to list of files for training and testing and probabilities for each image (optional)"
     )
     training_args.add_argument(
+        "--no_load_files", action="store_false", dest="load_files",
+        help="NOT load all files into memory at once (loads the images needed for every epoch before each epoch)."
+    )
+    training_args.add_argument(
         "--mask_filter", default="_masks", type=str, help=
         "end string for masks to run on. use '_seg.npy' for manual annotations from the GUI. Default: %(default)s"
     )

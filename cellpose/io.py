@@ -409,7 +409,7 @@ def get_label_files(image_names, mask_filter, imf=None):
 
 
 def load_images_labels(tdir, mask_filter="_masks", image_filter=None,
-                       look_one_level_down=False):
+                       look_one_level_down=False, load_files=True):
     """
     Loads images and corresponding labels from a directory.
 
@@ -428,7 +428,8 @@ def load_images_labels(tdir, mask_filter="_masks", image_filter=None,
     # training data
     label_names, flow_names = get_label_files(image_names, mask_filter,
                                               imf=image_filter)
-
+    if not load_files:
+        return None, None, image_names
     images = []
     labels = []
     k = 0
@@ -451,7 +452,7 @@ def load_images_labels(tdir, mask_filter="_masks", image_filter=None,
     return images, labels, image_names
 
 def load_train_test_data(train_dir, test_dir=None, image_filter=None,
-                         mask_filter="_masks", look_one_level_down=False):
+                         mask_filter="_masks", look_one_level_down=False, load_files=True):
     """
     Loads training and testing data for a Cellpose model.
 
@@ -471,14 +472,14 @@ def load_train_test_data(train_dir, test_dir=None, image_filter=None,
         test_image_names (list, optional): A list of names of the testing images. None if test_dir is not provided.
     """
     images, labels, image_names = load_images_labels(train_dir, mask_filter,
-                                                     image_filter, look_one_level_down)
+                                                     image_filter, look_one_level_down, load_files)
     # testing data
     test_images, test_labels, test_image_names = None, None, None
     if test_dir is not None:
         test_images, test_labels, test_image_names = load_images_labels(
-            test_dir, mask_filter, image_filter, look_one_level_down)
+            test_dir, mask_filter, image_filter, look_one_level_down, load_files)
 
-    return images, labels, image_names, test_images, test_labels, test_image_names
+    return images[:100000], labels[:100000], image_names[:100000], test_images[:10000], test_labels[:10000], test_image_names[:10000]
 
 
 def masks_flows_to_seg(images, masks, flows, file_names, diams=30., channels=None,
