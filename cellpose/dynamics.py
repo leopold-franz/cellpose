@@ -408,7 +408,6 @@ def labels_to_flows(labels, files=None, device=None, redo_flows=False, niter=Non
             flow = np.concatenate((labels[n], labels[n] > 0.5, vecn),
                                   axis=0).astype(np.float32)
             if files is not None:
-                file_name = os.path.splitext(files[n])[0]
                 tifffile.imwrite(file_name + "_flows.tif", flow)
             if return_flows:
                 flows.append(flow)

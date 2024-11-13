@@ -11,6 +11,7 @@ import logging, pathlib, sys
 from tqdm import tqdm
 from pathlib import Path
 import re
+import torch
 from . import version_str
 from roifile import ImagejRoi, roiwrite
 
@@ -62,6 +63,15 @@ def logger_setup(cp_path=".cellpose", logfile_name="run.log"):
     logger = logging.getLogger(__name__)
     logger.info(f"WRITING LOG OUTPUT TO {log_file}")
     logger.info(version_str)
+    # Check if CUDA is available (GPU)
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        # Print GPU name and VRAM
+        logger.info(f"Device type: {torch.cuda.get_device_name(device)}")
+        logger.info(f"VRAM: {torch.cuda.get_device_properties(device).total_memory / (1024 ** 3):.2f} GB")
+    else:
+        device = torch.device("cpu")
+        logger.info("Device type: CPU")
     #logger.handlers[1].stream = sys.stdout
 
     return logger, log_file
