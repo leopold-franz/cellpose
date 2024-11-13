@@ -12,7 +12,7 @@ from tqdm import tqdm
 from pathlib import Path
 import re
 import torch
-from . import version_str
+from cellpose.version import version_str
 from roifile import ImagejRoi, roiwrite
 
 try:
