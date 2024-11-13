@@ -62,7 +62,7 @@ def main():
     else:
         if args.verbose:
             from .io import logger_setup
-            logger, log_file = logger_setup(logfile_name=f"run_{args.model_name_out}.log")
+            logger, _ = logger_setup(logfile_name=args.logfile_name)
         else:
             print(
                 ">>>> !LOGGING OFF BY DEFAULT! To see cellpose progress, set --verbose")

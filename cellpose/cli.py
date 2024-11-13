@@ -21,6 +21,9 @@ def get_arg_parser():
     parser.add_argument(
         "--verbose", action="store_true",
         help="show information about running and settings and save to log")
+    parser.add_argument(
+        "--log_name", default=None, type=str,
+        help="Name of log file to save verbose output to (defaults to run.log). Provide full path to save in a different location.")
     parser.add_argument("--Zstack", action="store_true", help="run GUI in 3D mode")
 
     # settings for CPU vs GPU

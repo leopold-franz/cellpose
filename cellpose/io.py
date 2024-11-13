@@ -49,9 +49,12 @@ except:
 io_logger = logging.getLogger(__name__)
 
 def logger_setup(cp_path=".cellpose", logfile_name="run.log"):
-    cp_dir = pathlib.Path.home().joinpath(cp_path)
-    cp_dir.mkdir(exist_ok=True)
-    log_file = cp_dir.joinpath(logfile_name)
+    if not os.path.isabs(logfile_name):
+        cp_dir = pathlib.Path.home().joinpath(cp_path)
+        cp_dir.mkdir(exist_ok=True)
+        log_file = cp_dir.joinpath(logfile_name)
+    else:
+        log_file = logfile_name
     try:
         log_file.unlink()
     except:
