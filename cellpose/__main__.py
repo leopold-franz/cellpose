@@ -356,10 +356,10 @@ def main():
                     logger.info(
                         "style test correlation: %0.4f; final test correlation: %0.4f" %
                         (ccs, cc))
+                    model_path = cpmodel_path if args.train else pretrained_model
+                    save_path = os.path.join(args.test_dir, "%s_predicted_diams.npy" % os.path.split(model_path)[1])
                     np.save(
-                        os.path.join(
-                            args.test_dir,
-                            "%s_predicted_diams.npy" % os.path.split(cpmodel_path)[1]),
+                        save_path,
                         {
                             "predicted_diams": predicted_diams,
                             "diams_style": diams_style
