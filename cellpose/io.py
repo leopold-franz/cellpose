@@ -479,7 +479,7 @@ def load_train_test_data(train_dir, test_dir=None, image_filter=None,
         test_images, test_labels, test_image_names = load_images_labels(
             test_dir, mask_filter, image_filter, look_one_level_down, load_files)
 
-    return images[:100000], labels[:100000], image_names[:100000], test_images[:10000], test_labels[:10000], test_image_names[:10000]
+    return images, labels, image_names, test_images, test_labels, test_image_names
 
 
 def masks_flows_to_seg(images, masks, flows, file_names, diams=30., channels=None,

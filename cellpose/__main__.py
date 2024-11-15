@@ -271,7 +271,7 @@ def main():
                         images = images[:args.nimg_per_epoch]
                         labels = labels[:args.nimg_per_epoch]
                         image_names = image_names[:args.nimg_per_epoch]
-                    if args.nimg_test_per_epoch is not None:
+                    if args.nimg_test_per_epoch is not None and image_names_test is not None:
                         test_images = test_images[:args.nimg_test_per_epoch]
                         test_labels = test_labels[:args.nimg_test_per_epoch]
                         image_names_test = image_names_test[:args.nimg_test_per_epoch]
