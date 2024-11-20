@@ -274,6 +274,10 @@ def _process_train_test(train_data=None, train_labels=None, train_files=None,
         diam_test[diam_test < 5] = 5.
     else:
         diam_test = None
+    # log mean diameter of training and test data
+    train_logger.info(f"mean train diameter: {diam_train.mean():.2f}")
+    if test_data is not None:
+        train_logger.info(f"mean test diameter: {diam_test.mean():.2f}")
 
     ### check to remove training images with too few masks
     if min_train_masks > 0:
@@ -387,6 +391,7 @@ def train_seg(net, train_data=None, train_labels=None, train_files=None,
     else:
         normalize_params = models.normalize_default
         normalize_params["normalize"] = normalize
+        normalize_params["percentile"] = [1.0, 99.0] # To be identical to GUI
 
     out = _process_train_test(train_data=train_data, train_labels=train_labels,
                               train_files=train_files, train_labels_files=train_labels_files,

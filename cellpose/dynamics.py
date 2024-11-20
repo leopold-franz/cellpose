@@ -393,22 +393,25 @@ def labels_to_flows(labels, files=None, device=None, redo_flows=False, niter=Non
         labels = [fastremap.renumber(label, in_place=True)[0] for label in labels]
         iterator = trange if nimg > 1 else range
         for n in iterator(nimg):
+            flow = None
             if files is not None:
                 file_name = os.path.splitext(files[n])[0]
+                # only compute flows that don't yet exist
                 if os.path.exists(file_name + "_flows.tif"):
-                    continue
-            labels[n][0] = fastremap.renumber(labels[n][0], in_place=True)[0]
-            try:
-                vecn = masks_to_flows(labels[n][0].astype(int), device=device, niter=niter)
-            except Exception as e:
-                dynamics_logger.error(f"Error computing flows for labels {n}, file: {files[n]}:, shape: {labels[n][0].astype(int).shape} - {e}")
-                raise e
-
-            # concatenate labels, distance transform, vector flows, heat (boundary and mask are computed in augmentations)
-            flow = np.concatenate((labels[n], labels[n] > 0.5, vecn),
-                                  axis=0).astype(np.float32)
+                    flow = tifffile.imread(file_name + "_flows.tif")
+            if flow is None:
+                labels[n][0] = fastremap.renumber(labels[n][0], in_place=True)[0]
+                try:
+                    vecn = masks_to_flows(labels[n][0].astype(int), device=device, niter=niter)
+                except Exception as e:
+                    dynamics_logger.error(f"Error computing flows for labels {n}, file: {files[n]}:, shape: {labels[n][0].astype(int).shape} - {e}")
+                    raise e
+                # concatenate labels, distance transform, vector flows, heat (boundary and mask are computed in augmentations)
+                flow = np.concatenate((labels[n], labels[n] > 0.5, vecn),
+                                    axis=0).astype(np.float32)
             if files is not None:
                 tifffile.imwrite(file_name + "_flows.tif", flow)
+            
             if return_flows:
                 flows.append(flow)
     else:
