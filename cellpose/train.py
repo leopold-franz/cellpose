@@ -274,6 +274,10 @@ def _process_train_test(train_data=None, train_labels=None, train_files=None,
         diam_test[diam_test < 5] = 5.
     else:
         diam_test = None
+    # log mean diameter of training and test data
+    train_logger.info(f"mean train diameter: {diam_train.mean():.2f}")
+    if test_data is not None:
+        train_logger.info(f"mean test diameter: {diam_test.mean():.2f}")
 
     ### check to remove training images with too few masks
     if min_train_masks > 0:
@@ -364,8 +368,8 @@ def train_seg(net, train_data=None, train_labels=None, train_files=None,
         save_path (str, optional): String - where to save the trained model. Defaults to None.
         save_every (int, optional): Integer - save the network every [save_every] epochs. Defaults to 100.
         save_each (bool, optional): Boolean - save the network to a new filename at every [save_each] epoch. Defaults to False.
-        nimg_per_epoch (int, optional): Integer - minimum number of images to train on per epoch. Defaults to None.
-        nimg_test_per_epoch (int, optional): Integer - minimum number of images to test on per epoch. Defaults to None.
+        nimg_per_epoch (int, optional): Integer - maximum number of images to train on per epoch. Defaults to None.
+        nimg_test_per_epoch (int, optional): Integer - maximum number of images to test on per epoch. Defaults to None.
         rescale (bool, optional): Boolean - whether or not to rescale images during training. Defaults to True.
         min_train_masks (int, optional): Integer - minimum number of masks an image must have to use in the training set. Defaults to 5.
         model_name (str, optional): String - name of the network. Defaults to None.
@@ -387,6 +391,7 @@ def train_seg(net, train_data=None, train_labels=None, train_files=None,
     else:
         normalize_params = models.normalize_default
         normalize_params["normalize"] = normalize
+        normalize_params["percentile"] = [1.0, 99.0] # To be identical to GUI
 
     out = _process_train_test(train_data=train_data, train_labels=train_labels,
                               train_files=train_files, train_labels_files=train_labels_files,

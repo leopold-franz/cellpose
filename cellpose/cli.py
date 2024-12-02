@@ -21,6 +21,9 @@ def get_arg_parser():
     parser.add_argument(
         "--verbose", action="store_true",
         help="show information about running and settings and save to log")
+    parser.add_argument(
+        "--log_name", default=None, type=str,
+        help="Name of log file to save verbose output to (defaults to run.log). Provide full path to save in a different location.")
     parser.add_argument("--Zstack", action="store_true", help="run GUI in 3D mode")
 
     # settings for CPU vs GPU
@@ -183,6 +186,10 @@ def get_arg_parser():
     training_args.add_argument(
         "--file_list", default=[], type=str, help=
         "path to list of files for training and testing and probabilities for each image (optional)"
+    )
+    training_args.add_argument(
+        "--no_load_files", action="store_false", dest="load_files",
+        help="NOT load all files into memory at once (loads the images needed for every epoch before each epoch)."
     )
     training_args.add_argument(
         "--mask_filter", default="_masks", type=str, help=

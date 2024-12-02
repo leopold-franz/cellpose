@@ -6,7 +6,8 @@ import sys, os, glob, pathlib, time
 import numpy as np
 from natsort import natsorted
 from tqdm import tqdm
-from cellpose import utils, models, io, version_str, train, denoise
+from cellpose import utils, models, io, train, denoise
+from cellpose.version import version_str
 from cellpose.cli import get_arg_parser
 
 try:
@@ -62,7 +63,7 @@ def main():
     else:
         if args.verbose:
             from .io import logger_setup
-            logger, log_file = logger_setup()
+            logger, _ = logger_setup(logfile_name=args.log_name)
         else:
             print(
                 ">>>> !LOGGING OFF BY DEFAULT! To see cellpose progress, set --verbose")
@@ -259,11 +260,22 @@ def main():
                 else:
                     logger.critical(f"ERROR: {args.file_list} does not exist")
             else:
+                load_files = args.load_files
                 output = io.load_train_test_data(args.dir, test_dir, imf,
-                                                 args.mask_filter,
-                                                 args.look_one_level_down)
+                                                args.mask_filter,
+                                                args.look_one_level_down, load_files)
                 images, labels, image_names, test_images, test_labels, image_names_test = output
-                load_files = True
+                # Limit train images and labels to the first nimg_per_epoch and test images and labels to the first nimg_test_per_epoch
+                if load_files:
+                    if args.nimg_per_epoch is not None:
+                        images = images[:args.nimg_per_epoch]
+                        labels = labels[:args.nimg_per_epoch]
+                        image_names = image_names[:args.nimg_per_epoch]
+                    if args.nimg_test_per_epoch is not None and image_names_test is not None:
+                        test_images = test_images[:args.nimg_test_per_epoch]
+                        test_labels = test_labels[:args.nimg_test_per_epoch]
+                        image_names_test = image_names_test[:args.nimg_test_per_epoch]
+
 
             # training with all channels
             if args.all_channels:
@@ -344,10 +356,10 @@ def main():
                     logger.info(
                         "style test correlation: %0.4f; final test correlation: %0.4f" %
                         (ccs, cc))
+                    model_path = cpmodel_path if args.train else pretrained_model
+                    save_path = os.path.join(args.test_dir, "%s_predicted_diams.npy" % os.path.split(model_path)[1])
                     np.save(
-                        os.path.join(
-                            args.test_dir,
-                            "%s_predicted_diams.npy" % os.path.split(cpmodel_path)[1]),
+                        save_path,
                         {
                             "predicted_diams": predicted_diams,
                             "diams_style": diams_style
